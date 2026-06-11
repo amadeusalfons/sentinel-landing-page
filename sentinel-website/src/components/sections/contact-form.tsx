@@ -43,7 +43,7 @@ export function ContactFormSection() {
             Get in touch
           </span>
           <h2 className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Let&apos;s talk about your support
+            More questions? Let&apos;s talk
           </h2>
           <p className="mt-4 text-muted-foreground">
             Send us a message and we&apos;ll get back to you on WhatsApp within minutes.

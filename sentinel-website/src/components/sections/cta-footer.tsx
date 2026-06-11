@@ -184,7 +184,7 @@ export function CtaFooterSection() {
             </h2>
 
             <div ref={linksRef} className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:justify-center">
-              <CtaButtons />
+              <CtaButtons label="Let&apos;s make your business efficient, or let&apos;s build" />
             </div>
           </div>
 

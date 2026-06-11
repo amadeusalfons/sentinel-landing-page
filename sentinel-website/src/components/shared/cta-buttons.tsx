@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-const whatsappUrl =
-  "https://api.whatsapp.com/send/?phone=6282136421628&text&type=phone_number&app_absent=0";
+const whatsappNumber = "6282136421628";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -11,16 +10,20 @@ function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
-export function CtaButtons() {
+export function CtaButtons({ label }: { label?: string }) {
+  const demoText = "Hi, I'd like to request a demo of Sentinel.";
+  const prefilled = label ? "" : `&text=${encodeURIComponent(demoText)}`;
+  const url = `https://api.whatsapp.com/send/?phone=${whatsappNumber}${prefilled}&type=phone_number&app_absent=0`;
+
   return (
     <Link
-      href={whatsappUrl}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex h-14 items-center gap-2 rounded-xl bg-gradient-to-r from-navy to-navy-600 px-8 text-base font-semibold text-white shadow-lg shadow-navy/25 transition-all hover:shadow-xl hover:shadow-navy/40 hover:brightness-110"
     >
       <WhatsAppIcon className="h-5 w-5" />
-      Chat on WhatsApp
+      {label ?? "Request a Demo"}
     </Link>
   );
 }
