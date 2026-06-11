@@ -18,21 +18,36 @@ function Lightning({
   size?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || initializedRef.current) return;
 
-    const setupWebGL = () => {
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      if (w === 0 || h === 0) return false;
+    let attempts = 0;
+    const maxAttempts = 30;
+    let cleanup: (() => void) | undefined;
+
+    const tryInit = () => {
+      attempts++;
+      const w = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
+
+      if (w === 0 || h === 0) {
+        if (attempts < maxAttempts) requestAnimationFrame(tryInit);
+        return;
+      }
 
       canvas.width = w;
       canvas.height = h;
 
-      const gl = canvas.getContext("webgl", { alpha: true });
-      if (!gl) return false;
+      const gl = canvas.getContext("webgl", { alpha: true, antialias: false });
+      if (!gl) {
+        if (attempts < maxAttempts) requestAnimationFrame(tryInit);
+        return;
+      }
+
+      initializedRef.current = true;
 
       const vertexShaderSource = `
         attribute vec2 aPosition;
@@ -175,38 +190,20 @@ function Lightning({
       animId = requestAnimationFrame(render);
 
       const handleResize = () => {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+        canvas.width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
+        canvas.height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
       };
       window.addEventListener("resize", handleResize);
 
-      return () => {
+      cleanup = () => {
         window.removeEventListener("resize", handleResize);
         cancelAnimationFrame(animId);
       };
     };
 
-    let cleanup: (() => void) | undefined;
+    requestAnimationFrame(tryInit);
 
-    const tryInit = () => {
-      const result = setupWebGL();
-      if (result) {
-        cleanup = result;
-        observer.disconnect();
-      }
-    };
-
-    requestAnimationFrame(() => requestAnimationFrame(tryInit));
-
-    const observer = new ResizeObserver(() => {
-      if (!cleanup) tryInit();
-    });
-    observer.observe(canvas.parentElement ?? canvas);
-
-    return () => {
-      observer.disconnect();
-      cleanup?.();
-    };
+    return () => cleanup?.();
   }, [hue, xOffset, speed, intensity, size]);
 
   return <canvas ref={canvasRef} className="h-full w-full" />;
@@ -284,7 +281,6 @@ export function HeroSection() {
         <div className="absolute top-0 w-full left-1/2 -translate-x-1/2 h-full">
           <Lightning hue={220} xOffset={0} speed={1.6} intensity={0.5} size={2} />
         </div>
-        <div className="z-10 absolute top-[55%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle_at_25%_90%,_#0B1E3F_15%,_#000000de_70%,_#000000ed_100%)]" />
       </motion.div>
     </div>
   );
