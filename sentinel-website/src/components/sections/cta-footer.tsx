@@ -183,7 +183,7 @@ export function CtaFooterSection() {
               Ready to automate your support?
             </h2>
 
-            <div ref={linksRef} className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:justify-center">
+            <div ref={linksRef} className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap">
               <CtaButtons label="Optimize your business now" />
             </div>
           </div>
