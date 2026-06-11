@@ -196,22 +196,10 @@ function PixelCanvas({
 }
 
 const logos = [
-  { label: "Apex", colors: ["#0B1E3F", "#15356B", "#9CA3AF"] },
-  { label: "Nova", colors: ["#15356B", "#1F2937", "#0B1E3F"] },
-  { label: "Flux", colors: ["#9CA3AF", "#0B1E3F", "#374151"] },
-  { label: "Hexa", colors: ["#1F2937", "#15356B", "#0B1E3F"] },
-  { label: "Cube", colors: ["#0B1E3F", "#374151", "#9CA3AF"] },
-  { label: "Dawn", colors: ["#15356B", "#0B1E3F", "#1F2937"] },
-  { label: "Echo", colors: ["#374151", "#9CA3AF", "#15356B"] },
-  { label: "Vox", colors: ["#1F2937", "#0B1E3F", "#15356B"] },
-  { label: "Rift", colors: ["#0B1E3F", "#15356B", "#1F2937"] },
-  { label: "Mira", colors: ["#9CA3AF", "#374151", "#0B1E3F"] },
-  { label: "Kai", colors: ["#15356B", "#1F2937", "#374151"] },
-  { label: "Zion", colors: ["#374151", "#0B1E3F", "#15356B"] },
-  { label: "Sol", colors: ["#0B1E3F", "#9CA3AF", "#1F2937"] },
-  { label: "Arc", colors: ["#1F2937", "#374151", "#0B1E3F"] },
-  { label: "Pulse", colors: ["#15356B", "#0B1E3F", "#9CA3AF"] },
-  { label: "Grid", colors: ["#9CA3AF", "#1F2937", "#374151"] },
+  { label: "ARCN", colors: ["#0B1E3F", "#15356B", "#9CA3AF"] },
+  { label: "EKW Group", colors: ["#15356B", "#1F2937", "#0B1E3F"] },
+  { label: "Gloria Group", colors: ["#9CA3AF", "#0B1E3F", "#374151"] },
+  { label: "BGA Group", colors: ["#1F2937", "#15356B", "#0B1E3F"] },
 ];
 
 export function PartnersSection() {
@@ -227,7 +215,7 @@ export function PartnersSection() {
           </h2>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {logos.map(({ label, colors }) => (
             <div
               key={label}

@@ -7,37 +7,25 @@ const testimonials = [
     text: "Sentinel transformed how we handle support. Response times dropped 60% in the first month.",
     image: "https://i.pravatar.cc/150?img=1",
     name: "Sarah Chen",
-    role: "Head of CX at Apex",
+    role: "Head of CX at ARCN",
   },
   {
     text: "The integrated dashboard alone saved us from juggling 5 different tools. Absolute game changer.",
     image: "https://i.pravatar.cc/150?img=2",
     name: "Marcus Rivera",
-    role: "Ops Director at Nova",
-  },
-  {
-    text: "Our team spends more time helping customers and less time fighting the tool. AI drafts are surprisingly good.",
-    image: "https://i.pravatar.cc/150?img=3",
-    name: "Priya Patel",
-    role: "Support Lead at Flux",
+    role: "Ops Director at EKW Group",
   },
   {
     text: "Enterprise-grade security was non-negotiable for us. Sentinel delivered SOC 2 compliance without friction.",
     image: "https://i.pravatar.cc/150?img=4",
     name: "James Okonkwo",
-    role: "CISO at Hexa",
-  },
-  {
-    text: "We onboarded 200 agents in a week. The customizable workflows meant zero disruption to our existing processes.",
-    image: "https://i.pravatar.cc/150?img=5",
-    name: "Elena Kowalski",
-    role: "VP Support at Dawn",
+    role: "CISO at Gloria Group",
   },
   {
     text: "Finally, a dashboard that gives me real visibility. I can see every channel, SLA, and bottleneck at a glance.",
     image: "https://i.pravatar.cc/150?img=6",
     name: "David Nakamura",
-    role: "CTO at Rift",
+    role: "CTO at BGA Group",
   },
 ];
 
@@ -59,9 +47,8 @@ export function TestimonialsSection() {
       </div>
 
       <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
-        <TestimonialsColumn testimonials={testimonials} duration={12} />
-        <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={18} className="hidden md:block" />
-        <TestimonialsColumn testimonials={testimonials.slice(2)} duration={15} className="hidden lg:block" />
+        <TestimonialsColumn testimonials={testimonials} duration={15} />
+        <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={12} className="hidden md:block" />
       </div>
     </section>
   );

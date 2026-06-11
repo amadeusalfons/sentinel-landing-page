@@ -200,7 +200,7 @@ const itemVariants = {
 
 export function HeroSection() {
   return (
-    <div className="relative w-full overflow-hidden bg-black text-foreground">
+    <div className="relative w-full h-screen overflow-hidden bg-black text-foreground">
       <div className="relative z-20 mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 h-screen flex flex-col justify-center">
         <motion.div
           variants={containerVariants}
