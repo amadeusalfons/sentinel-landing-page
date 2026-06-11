@@ -2,7 +2,7 @@
 
 import { TestimonialsColumn } from "@/components/sections/testimonials-column";
 
-const testimonials = [
+const col1 = [
   {
     text: "Sebelum pakai Sentinel, tim kami kewalahan dengan ribuan tiket per bulan. Sekarang response time turun 60% dan CSAT naik signifikan.",
     image: "https://i.pravatar.cc/150?img=12",
@@ -15,6 +15,9 @@ const testimonials = [
     name: "Daniel Kurniawan",
     role: "Ops Director at EKW Group",
   },
+];
+
+const col2 = [
   {
     text: "Keamanan enterprise adalah prioritas utama kami. Sentinel memberikan SOC 2 compliance, SSO, dan RBAC tanpa ribet. Audit eksternal pun lancar.",
     image: "https://i.pravatar.cc/150?img=47",
@@ -26,6 +29,21 @@ const testimonials = [
     image: "https://i.pravatar.cc/150?img=59",
     name: "Budi Santoso",
     role: "VP Support at BGA Group",
+  },
+];
+
+const col3 = [
+  {
+    text: "Fitur auto-triage Sentinel memotong 40% workload tim kami. Agent sekarang fokus ke kasus prioritas tinggi, bukan tiket repetitif.",
+    image: "https://i.pravatar.cc/150?img=33",
+    name: "Kenzo Wijaya",
+    role: "Support Lead at Gloria Group",
+  },
+  {
+    text: "Integrasi multi-channel Sentinel menyatukan WhatsApp, email, dan live chat dalam satu dashboard. Tidak ada lagi customer yang terlewat.",
+    image: "https://i.pravatar.cc/150?img=26",
+    name: "Luhur Prasetyo",
+    role: "CX Manager at BGA Group",
   },
 ];
 
@@ -47,9 +65,9 @@ export function TestimonialsSection() {
       </div>
 
       <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
-        <TestimonialsColumn testimonials={testimonials} duration={18} />
-        <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={14} className="hidden md:block" />
-        <TestimonialsColumn testimonials={testimonials.slice(1)} duration={20} className="hidden lg:block" />
+        <TestimonialsColumn testimonials={col1} duration={18} />
+        <TestimonialsColumn testimonials={col2} duration={14} className="hidden md:block" />
+        <TestimonialsColumn testimonials={col3} duration={20} className="hidden lg:block" />
       </div>
     </section>
   );
