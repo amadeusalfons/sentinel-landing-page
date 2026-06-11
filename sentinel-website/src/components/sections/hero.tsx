@@ -23,158 +23,189 @@ function Lightning({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resizeCanvas = () => {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    };
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    const setupWebGL = () => {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (w === 0 || h === 0) return false;
 
-    const gl = canvas.getContext("webgl");
-    if (!gl) return;
+      canvas.width = w;
+      canvas.height = h;
 
-    const vertexShaderSource = `
-      attribute vec2 aPosition;
-      void main() {
-        gl_Position = vec4(aPosition, 0.0, 1.0);
-      }
-    `;
+      const gl = canvas.getContext("webgl", { alpha: true });
+      if (!gl) return false;
 
-    const fragmentShaderSource = `
-      precision mediump float;
-      uniform vec2 iResolution;
-      uniform float iTime;
-      uniform float uHue;
-      uniform float uXOffset;
-      uniform float uSpeed;
-      uniform float uIntensity;
-      uniform float uSize;
+      const vertexShaderSource = `
+        attribute vec2 aPosition;
+        void main() {
+          gl_Position = vec4(aPosition, 0.0, 1.0);
+        }
+      `;
 
-      #define OCTAVE_COUNT 10
+      const fragmentShaderSource = `
+        precision mediump float;
+        uniform vec2 iResolution;
+        uniform float iTime;
+        uniform float uHue;
+        uniform float uXOffset;
+        uniform float uSpeed;
+        uniform float uIntensity;
+        uniform float uSize;
 
-      vec3 hsv2rgb(vec3 c) {
-          vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
-          return c.z * mix(vec3(1.0), rgb, c.y);
-      }
+        #define OCTAVE_COUNT 10
 
-      float hash11(float p) {
-          p = fract(p * .1031);
-          p *= p + 33.33;
-          p *= p + p;
-          return fract(p);
-      }
+        vec3 hsv2rgb(vec3 c) {
+            vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+            return c.z * mix(vec3(1.0), rgb, c.y);
+        }
 
-      float hash12(vec2 p) {
-          vec3 p3 = fract(vec3(p.xyx) * .1031);
-          p3 += dot(p3, p3.yzx + 33.33);
-          return fract((p3.x + p3.y) * p3.z);
-      }
+        float hash11(float p) {
+            p = fract(p * .1031);
+            p *= p + 33.33;
+            p *= p + p;
+            return fract(p);
+        }
 
-      mat2 rotate2d(float theta) {
-          float c = cos(theta);
-          float s = sin(theta);
-          return mat2(c, -s, s, c);
-      }
+        float hash12(vec2 p) {
+            vec3 p3 = fract(vec3(p.xyx) * .1031);
+            p3 += dot(p3, p3.yzx + 33.33);
+            return fract((p3.x + p3.y) * p3.z);
+        }
 
-      float noise(vec2 p) {
-          vec2 ip = floor(p);
-          vec2 fp = fract(p);
-          float a = hash12(ip);
-          float b = hash12(ip + vec2(1.0, 0.0));
-          float c = hash12(ip + vec2(0.0, 1.0));
-          float d = hash12(ip + vec2(1.0, 1.0));
-          vec2 t = smoothstep(0.0, 1.0, fp);
-          return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
-      }
+        mat2 rotate2d(float theta) {
+            float c = cos(theta);
+            float s = sin(theta);
+            return mat2(c, -s, s, c);
+        }
 
-      float fbm(vec2 p) {
-          float value = 0.0;
-          float amplitude = 0.5;
-          for (int i = 0; i < OCTAVE_COUNT; ++i) {
-              value += amplitude * noise(p);
-              p *= rotate2d(0.45);
-              p *= 2.0;
-              amplitude *= 0.5;
-          }
-          return value;
-      }
+        float noise(vec2 p) {
+            vec2 ip = floor(p);
+            vec2 fp = fract(p);
+            float a = hash12(ip);
+            float b = hash12(ip + vec2(1.0, 0.0));
+            float c = hash12(ip + vec2(0.0, 1.0));
+            float d = hash12(ip + vec2(1.0, 1.0));
+            vec2 t = smoothstep(0.0, 1.0, fp);
+            return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
+        }
 
-      void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-          vec2 uv = fragCoord / iResolution.xy;
-          uv = 2.0 * uv - 1.0;
-          uv.x *= iResolution.x / iResolution.y;
-          uv.x += uXOffset;
-          uv += 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
-          float dist = abs(uv.x);
-          vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
-          vec3 col = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
-          col = pow(col, vec3(1.0));
-          fragColor = vec4(col, 1.0);
-      }
+        float fbm(vec2 p) {
+            float value = 0.0;
+            float amplitude = 0.5;
+            for (int i = 0; i < OCTAVE_COUNT; ++i) {
+                value += amplitude * noise(p);
+                p *= rotate2d(0.45);
+                p *= 2.0;
+                amplitude *= 0.5;
+            }
+            return value;
+        }
 
-      void main() {
-          mainImage(gl_FragColor, gl_FragCoord.xy);
-      }
-    `;
+        void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+            vec2 uv = fragCoord / iResolution.xy;
+            uv = 2.0 * uv - 1.0;
+            uv.x *= iResolution.x / iResolution.y;
+            uv.x += uXOffset;
+            uv += 2.0 * fbm(uv * uSize + 0.8 * iTime * uSpeed) - 1.0;
+            float dist = abs(uv.x);
+            vec3 baseColor = hsv2rgb(vec3(uHue / 360.0, 0.7, 0.8));
+            vec3 col = baseColor * pow(mix(0.0, 0.07, hash11(iTime * uSpeed)) / dist, 1.0) * uIntensity;
+            col = pow(col, vec3(1.0));
+            fragColor = vec4(col, 1.0);
+        }
 
-    const compileShader = (source: string, type: number): WebGLShader | null => {
-      const shader = gl.createShader(type);
-      if (!shader) return null;
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return null;
-      return shader;
-    };
+        void main() {
+            mainImage(gl_FragColor, gl_FragCoord.xy);
+        }
+      `;
 
-    const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
-    const fragmentShader = compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
-    if (!vertexShader || !fragmentShader) return;
+      const compileShader = (source: string, type: number): WebGLShader | null => {
+        const shader = gl.createShader(type);
+        if (!shader) return null;
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return null;
+        return shader;
+      };
 
-    const program = gl.createProgram();
-    if (!program) return;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-    gl.useProgram(program);
+      const vertexShader = compileShader(vertexShaderSource, gl.VERTEX_SHADER);
+      const fragmentShader = compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
+      if (!vertexShader || !fragmentShader) return false;
 
-    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
-    const vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+      const program = gl.createProgram();
+      if (!program) return false;
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return false;
+      gl.useProgram(program);
 
-    const aPosition = gl.getAttribLocation(program, "aPosition");
-    gl.enableVertexAttribArray(aPosition);
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+      const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+      const vertexBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-    const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
-    const iTimeLocation = gl.getUniformLocation(program, "iTime");
-    const uHueLocation = gl.getUniformLocation(program, "uHue");
-    const uXOffsetLocation = gl.getUniformLocation(program, "uXOffset");
-    const uSpeedLocation = gl.getUniformLocation(program, "uSpeed");
-    const uIntensityLocation = gl.getUniformLocation(program, "uIntensity");
-    const uSizeLocation = gl.getUniformLocation(program, "uSize");
+      const aPosition = gl.getAttribLocation(program, "aPosition");
+      gl.enableVertexAttribArray(aPosition);
+      gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
 
-    const startTime = performance.now();
-    let animId: number;
-    const render = () => {
-      resizeCanvas();
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform2f(iResolutionLocation, canvas.width, canvas.height);
-      gl.uniform1f(iTimeLocation, (performance.now() - startTime) / 1000.0);
-      gl.uniform1f(uHueLocation, hue);
-      gl.uniform1f(uXOffsetLocation, xOffset);
-      gl.uniform1f(uSpeedLocation, speed);
-      gl.uniform1f(uIntensityLocation, intensity);
-      gl.uniform1f(uSizeLocation, size);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      const iRes = gl.getUniformLocation(program, "iResolution");
+      const iTime = gl.getUniformLocation(program, "iTime");
+      const uHue = gl.getUniformLocation(program, "uHue");
+      const uXOff = gl.getUniformLocation(program, "uXOffset");
+      const uSpd = gl.getUniformLocation(program, "uSpeed");
+      const uInt = gl.getUniformLocation(program, "uIntensity");
+      const uSz = gl.getUniformLocation(program, "uSize");
+
+      const startTime = performance.now();
+      let animId: number;
+
+      const render = () => {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(iRes, canvas.width, canvas.height);
+        gl.uniform1f(iTime, (performance.now() - startTime) / 1000.0);
+        gl.uniform1f(uHue, hue);
+        gl.uniform1f(uXOff, xOffset);
+        gl.uniform1f(uSpd, speed);
+        gl.uniform1f(uInt, intensity);
+        gl.uniform1f(uSz, size);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        animId = requestAnimationFrame(render);
+      };
+
       animId = requestAnimationFrame(render);
+
+      const handleResize = () => {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+      };
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        cancelAnimationFrame(animId);
+      };
     };
-    animId = requestAnimationFrame(render);
+
+    let cleanup: (() => void) | undefined;
+
+    const tryInit = () => {
+      const result = setupWebGL();
+      if (result) {
+        cleanup = result;
+        observer.disconnect();
+      }
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(tryInit));
+
+    const observer = new ResizeObserver(() => {
+      if (!cleanup) tryInit();
+    });
+    observer.observe(canvas.parentElement ?? canvas);
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animId);
+      observer.disconnect();
+      cleanup?.();
     };
   }, [hue, xOffset, speed, intensity, size]);
 

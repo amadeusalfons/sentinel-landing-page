@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Play } from "lucide-react";
 
 const whatsappNumber = "6282136421628";
 
@@ -22,7 +23,7 @@ export function CtaButtons({ label }: { label?: string }) {
       rel="noopener noreferrer"
       className="inline-flex h-14 items-center gap-2 rounded-xl bg-gradient-to-r from-navy to-navy-600 px-8 text-base font-semibold text-white shadow-lg shadow-navy/25 transition-all hover:shadow-xl hover:shadow-navy/40 hover:brightness-110"
     >
-      <WhatsAppIcon className="h-5 w-5" />
+      {label ? <WhatsAppIcon className="h-5 w-5" /> : <Play className="h-5 w-5" />}
       {label ?? "Request a Demo"}
     </Link>
   );

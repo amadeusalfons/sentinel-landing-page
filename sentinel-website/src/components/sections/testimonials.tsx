@@ -31,7 +31,7 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="relative bg-background py-24 sm:py-32 overflow-hidden">
+    <section className="relative bg-background py-24 sm:py-32 pb-4 overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-3xl text-center mb-16">
           <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 backdrop-blur-sm px-3 py-1 text-xs font-medium text-muted-foreground">
@@ -47,8 +47,9 @@ export function TestimonialsSection() {
       </div>
 
       <div className="flex justify-center gap-6 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
-        <TestimonialsColumn testimonials={testimonials} duration={15} />
-        <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={12} className="hidden md:block" />
+        <TestimonialsColumn testimonials={testimonials} duration={18} />
+        <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={14} className="hidden md:block" />
+        <TestimonialsColumn testimonials={testimonials.slice(1)} duration={20} className="hidden lg:block" />
       </div>
     </section>
   );
