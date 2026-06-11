@@ -4,28 +4,28 @@ import { TestimonialsColumn } from "@/components/sections/testimonials-column";
 
 const testimonials = [
   {
-    text: "Sentinel transformed how we handle support. Response times dropped 60% in the first month.",
-    image: "https://i.pravatar.cc/150?img=1",
-    name: "Sarah Chen",
+    text: "Sebelum pakai Sentinel, tim kami kewalahan dengan ribuan tiket per bulan. Sekarang response time turun 60% dan CSAT naik signifikan.",
+    image: "https://i.pravatar.cc/150?img=12",
+    name: "Steven Lim",
     role: "Head of CX at ARCN",
   },
   {
-    text: "The integrated dashboard alone saved us from juggling 5 different tools. Absolute game changer.",
-    image: "https://i.pravatar.cc/150?img=2",
-    name: "Marcus Rivera",
+    text: "Dashboard terintegrasi Sentinel menggantikan 5 tools berbeda yang kami pakai sebelumnya. Satu layar untuk semua channel — efisiensi tim naik drastis.",
+    image: "https://i.pravatar.cc/150?img=53",
+    name: "Daniel Kurniawan",
     role: "Ops Director at EKW Group",
   },
   {
-    text: "Enterprise-grade security was non-negotiable for us. Sentinel delivered SOC 2 compliance without friction.",
-    image: "https://i.pravatar.cc/150?img=4",
-    name: "James Okonkwo",
+    text: "Keamanan enterprise adalah prioritas utama kami. Sentinel memberikan SOC 2 compliance, SSO, dan RBAC tanpa ribet. Audit eksternal pun lancar.",
+    image: "https://i.pravatar.cc/150?img=47",
+    name: "Putri Sasmita",
     role: "CISO at Gloria Group",
   },
   {
-    text: "Finally, a dashboard that gives me real visibility. I can see every channel, SLA, and bottleneck at a glance.",
-    image: "https://i.pravatar.cc/150?img=6",
-    name: "David Nakamura",
-    role: "CTO at BGA Group",
+    text: "Onboarding 200 agent dalam seminggu tanpa mengganggu workflow existing. Fitur AI-nya membantu agent baru langsung produktif di hari pertama.",
+    image: "https://i.pravatar.cc/150?img=59",
+    name: "Budi Santoso",
+    role: "VP Support at BGA Group",
   },
 ];
 
